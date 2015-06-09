@@ -1,0 +1,274 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.util.*;
+
+public class QuizProgram{
+	public static void main(String args[]){
+		new Quiz();
+	}
+}
+
+
+public class Report extends JFrame{
+	Report(){
+		setTitle("Answers");
+		setSize(850,550);
+		setBackground(Color.WHITE);
+		addWindowListener(new WindowAdapter(){
+		public void windowClosing(WindowEvent e){
+			dispose();
+            reset();
+		}
+	});
+	Draw d=new Draw();                                  
+	add(d);
+	setVisible(true);
+}
+
+class Draw extends Canvas{
+	public void paint(Graphics g){
+    	int qnum=10;
+        int x=10;
+        int y=20;
+        for(int i=0;i<qnum;i++){
+			//print the 1st column
+            g.setFont(new Font("Garamond",Font.BOLD,12));                                         
+            g.drawString(i+1+". "+answer[i][0], x,y);
+            y+=30;           
+            g.setFont(new Font("Garamond",Font.PLAIN,12));                             
+            g.drawString("      Correct answer:"+answer[i][1], x,y);
+            y+=30;
+            g.drawString("      Your answer:"+map.get(i), x,y);
+            y+=30;
+            
+            //print the 2nd column
+            if(y>400)	{
+            	y=20;
+                x=450;
+            }
+		}
+		
+	//Show number of correct answers
+    int numc=calCorrectAnswer();
+    g.setColor(Color.BLUE);
+    g.setFont(new Font("Garamond",14));
+	g.drawString("Number of correct answers:"+numc,300,500);
+			}
+		}
+	}
+}
+
+class  Quiz extends JFrame implements ActionListener{
+	JPanel panel;
+	JPanel panelresult;
+	JRadioButton ch1;
+	JRadioButton ch2;
+	JRadioButton ch3;
+    JRadioButton ch4;
+    ButtonGroup bg;
+    JLabel lbl;
+    JButton btnx;
+    String[][] questionchs;
+    String[][] answer;
+    int answerNumber;
+   HashMap<Integer, String> map;
+Quiz(){
+	initializedata();
+	setTitle("Quiz Program");
+	setDefaultCloseOperation(EXIT_ON_CLOSE);
+	setSize(430,350);
+	setLocation(300,100);
+	setResizable(false);
+	Container cont=getContentPane();
+	cont.setLayout(null);
+	cont.setBackground(Color.GRAY);
+	bg=new ButtonGroup();
+	ch1=new JRadioButton("ch1",true);
+    ch2=new JRadioButton("ch2",false);
+    ch3=new JRadioButton("ch3",false);
+	ch4=new JRadioButton("ch4",false);
+	bg.add(ch1);
+	bg.add(ch2);
+	bg.add(ch3);
+	bg.add(ch4);
+	lbl=new JLabel("Choose a correct anwswer");
+	lbl.setForeground(Color.BLUE);
+	lbl.setFont(new Font("Garamond", Font.BOLD, 11));
+	btnx=new JButton("Next");
+	btnx.setForeground(Color.GREEN);                
+	btnx.addActionListener(this);
+	panel=new JPanel();
+	panel.setBackground(Color.LIGHT_GRAY);
+	panel.setLocation(10,10);
+	panel.setSize(400,300);
+	panel.setLayout(new GridLayout(6,2));
+	panel.add(lbl);
+	panel.add(ch1);
+	panel.add(ch2);
+	panel.add(ch3);
+	panel.add(ch4);
+	panel.add(btnx);
+	cont.add(panel);
+	setVisible(true);
+	answerNumber=0;
+	readqa(answerNumber);
+	
+public void actionPerformed(ActionEvent e){
+	if(btnx.getText().equals("Next")){
+		if(answerNumber<9){
+			map.put(answerNumber,getSelection());
+            answerNumber++;
+            readqa(answerNumber);
+        }
+	else{
+		map.put(answerNumber,getSelection());
+        btnx.setText("Show answers");
+	}
+}
+    else if(btnx.getText().equals("Show answers"))
+		new Report();
+}
+
+public void initializedata(){
+//questions with answer chs
+	questionchs=new String[10][5];
+
+	questionchs[0][0]="What is the sun?";
+	questionchs[0][1]="moon";
+	questionchs[0][2]="star";
+	questionchs[0][3]="back hole";
+	questionchs[0][4]="None of the above";
+
+	questionchs[1][0]="What is the greatest major ever?! :)";
+	questionchs[1][1]="World History";
+	questionchs[1][2]="Computer Science";
+	questionchs[1][3]="Supply Chain Management";
+	questionchs[1][4]="Architecture";
+                       
+	questionchs[2][0]="Who wrote "The Odessey"?";
+	questionchs[2][1]="Socrates";
+	questionchs[2][2]="Plato";
+	questionchs[2][3]="Aristotle";
+	questionchs[2][4]="Homer";
+
+	questionchs[3][0]="How many hours of sleep are recommended?";
+	questionchs[3][1]="1";
+	questionchs[3][2]="7";
+	questionchs[3][3]="12";
+	questionchs[3][4]="5";
+
+	questionchs[4][0]="What does UI stand for?";
+	questionchs[4][1]="User Interface";
+	questionchs[4][2]="Unidentified Integer";
+	questionchs[4][3]="Understanding the Internet";
+	questionchs[4][4]="None of the above";
+
+	questionchs[5][0]="What is a horse?";
+	questionchs[5][1]="mammal";
+	questionchs[5][2]="insect";
+	questionchs[5][3]="fish";
+	questionchs[5][4]="extraterrestrial species";
+
+	questionchs[6][0]="What is 10-10 = ?";
+	questionchs[6][1]="1";
+	questionchs[6][2]="0";
+	questionchs[6][3]="3";
+	questionchs[6][4]="-3";
+
+	questionchs[7][0]="What is the formula for water?";
+	questionchs[7][1]="CH2";
+	questionchs[7][2]="H20";
+	questionchs[7][3]="NaCl";
+	questionchs[7][4]="CO2";
+
+	questionchs[8][0]="What is the conventional name for the patella?";
+	questionchs[8][1]="skull";
+	questionchs[8][2]="radius";
+	questionchs[8][3]="rib";
+	questionchs[8][4]="knee cap";
+
+	questionchs[9][0]="Who is an awesome computer science professor? :)";
+	questionchs[9][1]="Professor Chen!";
+	questionchs[9][2]="Professor Chen!";
+	questionchs[9][3]="Professor Chen!";
+	questionchs[9][4]="Professor Chen!";
+
+                       
+//correct answer is here
+	answer=new String[10][2];
+                       
+	answer[0][0]="What is the sun?";
+	answer[0][1]="star";
+
+	answer[1][0]="What is the greatest major ever?! :)";
+	answer[1][1]="Computer Science";
+
+	answer[2][0]="Who wrote "The Odessey"?";
+	answer[2][1]="Homer";
+
+	answer[3][0]="How many hours of sleep are recommended?";
+	answer[3][1]="7";
+
+	answer[4][0]="What does UI stand for?";
+	answer[4][1]="User Interface";
+
+	answer[5][0]="What is a horse?";
+	answer[5][1]="mammal";
+
+	answer[6][0]="What is 10-10 = ?";
+	answer[6][1]="0";
+                       
+	answer[7][0]="What is the formula for water?";
+	answer[7][1]="H2O";
+                       
+	answer[8][0]="What is the conventional name for the patella?";
+	answer[8][1]="knee cap";
+
+	answer[9][0]="Who is an awesome computer science professor? :)";
+	answer[9][1]="Professor Chen!";
+                       
+//create a map object to store pairs of question and selected answer
+	map=new HashMap<Integer, String>();
+}
+
+public String getSelection(){
+	String selectedch=null;
+    Enumeration<AbstractButton> buttons=bg.getElements(); 
+    while(buttons.hasMoreElements()) { 
+		JRadioButton temp=(JRadioButton)buttons.nextElement(); 
+        if(temp.isSelected()) { 
+			selectedch=temp.getText();
+        } 
+	}  
+    return(selectedch);
+}
+
+public void readqa(int qnum){
+	lbl.setText("  "+questionchs[qnum][0]);
+	ch1.setText(questionchs[qnum][1]);
+	ch2.setText(questionchs[qnum][2]);
+	ch3.setText(questionchs[qnum][3]);
+	ch4.setText(questionchs[qnum][4]);
+	ch1.setSelected(true);
+}
+
+public void reset(){
+	answerNumber=0;
+	map.clear();
+	readqa(answerNumber);
+	btnx.setText("Next");
+}
+
+public int calCorrectAnswer(){
+	int qnum=10;
+	int count=0;
+	for(int qnum=0;qnum<qnum;qnum++)
+	{
+		if(answer[qnum][1].equals(map.get(qnum))){
+			count++;
+		}
+		return count;
+	}
+}
